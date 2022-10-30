@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace SuperSnake.ClassicSnake
 {
@@ -31,17 +33,28 @@ namespace SuperSnake.ClassicSnake
         private GameObject _cellsParentObject;
 
 
-        [Header("TOOLS PARAMETERS")]
+        [Header("CAMERA PARAMETERS")]
         [SerializeField, Tooltip("camera used to setup view of grid")]
         private Camera _gameCamera;
 
+
+        [Header("UI EVENTS")]
+        [SerializeField, Tooltip("event used to update timer value in UI")]
+        private UnityEvent _updateTimerUI;
+
+        [SerializeField, Tooltip("event used to update score value in UI")]
+        private UnityEvent _updateScoreUI;
+
+        [SerializeField, Tooltip("event used to update length of snake in UI")]
+        private UnityEvent _updateLengthUI;
+
+
+        /**************************PRIVATE VARIABLES*************************/
 
         private Level _level = null;
 
         private float _timer = 0;
         private float _updateTimer = 0;
-
-        private Snake _snake = null;
 
         #endregion
 
@@ -59,11 +72,7 @@ namespace SuperSnake.ClassicSnake
             }
         }
 
-        public float Timer
-        {
-            get { return _timer; }
-            set { _timer = value; }
-        }
+        public float Timer => _timer;
 
         #endregion
 
@@ -72,58 +81,29 @@ namespace SuperSnake.ClassicSnake
             _gameCamera = FindObjectOfType<Camera>();
 
             _gameCamera.transform.position = new Vector3((Level.Width / 2f - 0.5f) * transform.localScale.x, (Level.Height / 2f - 0.5f) * transform.localScale.y, -100) + transform.position;
-            _gameCamera.orthographicSize = (Level.Width + Level.Height) / 4f;
+            _gameCamera.orthographicSize = (Level.Width + Level.Height) / 3.4f;
 
             LevelBuild();
 
-            CellsRendererEventSetup();
+            RendererEventSetup();
         }
 
         private void Start()
         {
-            Level.BuildFruit();
+            BuildLD();
         }
 
         private void Update()
         {
             if (!Level.IsPaused && !Level.IsGameOver)
             {
-
-                if (Input.GetKeyDown(KeyCode.UpArrow))
-                    DirectionQueueUpdate(Direction.Up, Direction.Down);
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
-                    DirectionQueueUpdate(Direction.Down, Direction.Up);
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    DirectionQueueUpdate(Direction.Right, Direction.Left);
-                else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    DirectionQueueUpdate(Direction.Left, Direction.Right);
-
-                if (_updateTimer >= 1f / _snakeParameters.SnakeSpeed)
-                {
-                    for (int i = 0; i < _snakeParameters.UpdateScale; i++)
-                        _snake.Update();
-
-                    _updateTimer = 0;
-                }
-
+                InputManager();
+                SnakeUpdate();
                 TimerUpdate();
             }
 
-            if(Level.IsGameOver && Input.GetKeyDown(KeyCode.R))
-            {
-                Level.IsGameOver = false;
-                _timer = 0;
-                _updateTimer = 0;
-
-                foreach (Cell cell in _level.CellsArray)
-                {
-                    if (cell.State != CellState.Empty && cell.State != CellState.Wall)
-                        cell.CellUpdate(CellState.Empty);
-                }
-
-                BuildSnake();
-                _level.BuildFruit();
-            }
+            if (Input.GetKeyDown(KeyCode.R))
+                Respawn();
 
             PauseInputManager();
         }
@@ -139,7 +119,7 @@ namespace SuperSnake.ClassicSnake
                 {
                     if (transform.Find("Cells") == null)
                     {
-                        _cellsParentObject = Instantiate(new GameObject("Cells"));
+                        _cellsParentObject = new GameObject("Cells");
                         _cellsParentObject.transform.SetParent(transform);
                     }
                     else
@@ -193,25 +173,31 @@ namespace SuperSnake.ClassicSnake
                         cellScript.GraphicUpdate();
                 }
             }
-
-            BuildSnake();
         }
 
-        private void BuildSnake()
+        private void BuildLD()
         {
             if (_snakeParameters == null || _snakeParameters.IsSnakeDefaultPos)
-                _snake = new Snake(_snakeParameters.FruitsPower, Level);
+                _level.BuildSnake(new Snake(_snakeParameters.FruitsPower, Level));
             else
-                _snake = new Snake(_snakeParameters.PositionX, _snakeParameters.PositionY, _snakeParameters.StartDirection, _snakeParameters.StartGrowUpdate, _snakeParameters.FruitsPower, Level);
+                _level.BuildSnake(new Snake(_snakeParameters.PositionX, _snakeParameters.PositionY, _snakeParameters.StartDirection, _snakeParameters.StartGrowUpdate, _snakeParameters.FruitsPower, Level));
 
-            _snake.SnakeCellsList = new List<Cell>();
-            _snake.SnakeCellsList.Add(_level.CellsArray[_snake.Position.x, _snake.Position.y]);
+            Level.BuildFruit();
+
+            _level.SnakePlayer.ScoreRendererUpdate += ScoreUpdate;
+            ScoreUpdate();
         }
 
         private void TimerUpdate()
         {
             _updateTimer += Time.deltaTime;
             _timer += Time.deltaTime;
+            _updateTimerUI.Invoke();
+        }
+
+        private void ScoreUpdate()
+        {
+            _updateScoreUI.Invoke();
         }
 
         private void PauseInputManager()
@@ -222,22 +208,64 @@ namespace SuperSnake.ClassicSnake
 
         private void DirectionQueueUpdate(Direction toGo, Direction ToNotGo)
         {
-            bool availableFirstSlot = _snake.InputQueue.Count == 0 && _snake.ForwardDirection != ToNotGo;
-            bool availableSecondSlot = _snake.InputQueue.Count == 1 && _snake.InputQueue[0] != ToNotGo;
-            bool availableChangeSecondSlot = _snake.InputQueue.Count == 2 && _snake.InputQueue[0] != ToNotGo;
+            bool availableFirstSlot = _level.SnakePlayer.InputQueue.Count == 0 && _level.SnakePlayer.ForwardDirection != ToNotGo;
+            bool availableSecondSlot = _level.SnakePlayer.InputQueue.Count == 1 && _level.SnakePlayer.InputQueue[0] != ToNotGo;
+            bool availableChangeSecondSlot = _level.SnakePlayer.InputQueue.Count == 2 && _level.SnakePlayer.InputQueue[0] != ToNotGo;
 
             if (availableFirstSlot || availableSecondSlot)
-                _snake.InputQueue.Add(toGo);
+                _level.SnakePlayer.InputQueue.Add(toGo);
             else if (availableChangeSecondSlot)
-                _snake.InputQueue[1] = toGo;
+                _level.SnakePlayer.InputQueue[1] = toGo;
         }
 
-        private void CellsRendererEventSetup()
+        private void RendererEventSetup()
         {
             CellRenderer[] cellsRendererArray = FindObjectsOfType<CellRenderer>();
 
             foreach (CellRenderer cellRenderer in cellsRendererArray)
                 cellRenderer.RendererUpdateEventSetup();
+        }
+
+        private void InputManager()
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+                DirectionQueueUpdate(Direction.Up, Direction.Down);
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+                DirectionQueueUpdate(Direction.Down, Direction.Up);
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+                DirectionQueueUpdate(Direction.Right, Direction.Left);
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+                DirectionQueueUpdate(Direction.Left, Direction.Right);
+        }
+
+        private void SnakeUpdate()
+        {
+            if (_updateTimer >= 1f / _snakeParameters.SnakeSpeed)
+            {
+                for (int i = 0; i < _snakeParameters.UpdateScale; i++)
+                {
+                    _level.SnakePlayer.Update();
+                    _updateLengthUI.Invoke();
+                }
+
+                _updateTimer = 0;
+            }
+        }
+
+        private void Respawn()
+        {
+            Level.IsGameOver = false;
+            Level.IsPaused = false;
+            _timer = 0;
+            _updateTimer = 0;
+
+            foreach (Cell cell in _level.CellsArray)
+            {
+                if (cell.State != CellState.Empty && cell.State != CellState.Wall)
+                    cell.CellUpdate(CellState.Empty);
+            }
+
+            BuildLD();
         }
     }
 }

@@ -8,7 +8,9 @@ namespace SuperSnake.ClassicSnake
 
         private Direction _forwardDirection;
 
-        private int _length;
+        private int _length = 1;
+
+        private int _score = 0;
 
         private int _growUpdate;
 
@@ -29,6 +31,7 @@ namespace SuperSnake.ClassicSnake
             set => _forwardDirection = value;
         }
         public int Length => _length;
+        public int Score => _score;
         public int GrowUpdate
         {
             get => _growUpdate;
@@ -52,30 +55,30 @@ namespace SuperSnake.ClassicSnake
             set => _fruitPower = value;
         }
 
+        public event RendererUpdate ScoreRendererUpdate;
+
         #endregion
 
         public Snake(int x, int y, Direction forwardDirection, int growUpdate, int fruitPower, Level level)
         {
             _position = new Coords2D(x, y);
             _forwardDirection = forwardDirection;
-            _length = 1;
             _growUpdate = growUpdate;
             _level = level;
             _fruitPower = fruitPower;
 
-            _level.CellsArray[_position.x, _position.y].State = CellState.Snake;
+            _level.CellsArray[_position.x, _position.y].CellUpdate(CellState.Snake);
         }
 
         public Snake(int fruitPower, Level level)
         {
             _position = new Coords2D(level.Width / 2, 1);
             _forwardDirection = Direction.Up;
-            _length = 1;
             _growUpdate = 4;
             _level = level;
             _fruitPower = fruitPower;
 
-            _level.CellsArray[_position.x, _position.y].State = CellState.Snake;
+            _level.CellsArray[_position.x, _position.y].CellUpdate(CellState.Snake);
         }
 
         public void Update()
@@ -87,34 +90,27 @@ namespace SuperSnake.ClassicSnake
             }
 
             if (_forwardDirection == Direction.Up)
-            {
                 _position.y++;
-            }
             else if (_forwardDirection == Direction.Down)
-            {
                 _position.y--;
-            }
             else if (_forwardDirection == Direction.Left)
-            {
                 _position.x--;
-            }
             else if (_forwardDirection == Direction.Right)
-            {
                 _position.x++;
-            }
 
             bool isCurrentCellWallOrSnake = _level.CellsArray[_position.x, _position.y].State == CellState.Wall || _level.CellsArray[_position.x, _position.y].State == CellState.Snake;
 
             if (isCurrentCellWallOrSnake)
-            {
                 _level.IsGameOver = true;
-            }
             else
             {
                 if(_level.CellsArray[_position.x, _position.y].State == CellState.Fruit)
                 {
                     _growUpdate += _fruitPower;
                     _level.BuildFruit();
+
+                    _score += _fruitPower;
+                    ScoreRendererUpdate.Invoke();
                 }
 
                 _level.CellsArray[_position.x, _position.y].CellUpdate(CellState.Snake);
@@ -130,6 +126,8 @@ namespace SuperSnake.ClassicSnake
                     _growUpdate--;
                 }
             }
+
+            _length = _snakeCellsList.Count;
         }
     }
 

@@ -23,7 +23,6 @@ namespace SuperSnake.ClassicSnake
             set => _state = value;
         }
 
-        public delegate void RendererUpdate();
         public event RendererUpdate CellRendererUpdate;
 
         #endregion

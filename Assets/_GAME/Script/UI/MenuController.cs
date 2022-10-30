@@ -10,7 +10,6 @@ namespace SuperSnake.ClassicSnake
     [AddComponentMenu("SuperSnake/ClassicSnake/MenuController")]
     public class MenuController : MonoBehaviour
     {
-
         #region variables
 
         [SerializeField, Tooltip("list of all panel used for every part of the menu")]

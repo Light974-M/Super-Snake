@@ -17,6 +17,6 @@ MonoBehaviour:
   _positionY: 1
   _startDirection: 2
   _startGrowUpdate: 4
-  _snakeSpeed: 4
+  _snakeSpeed: 1
   _updateScale: 1
-  _fruitsPower: 25
+  _fruitsPower: 1
