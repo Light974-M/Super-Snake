@@ -65,9 +65,17 @@ namespace SuperSnake.ClassicSnake
             set { _startGrowUpdate = value; }
         }
 
-        public float SnakeSpeed => _snakeSpeed;
+        public float SnakeSpeed
+        {
+            get { return _snakeSpeed; }
+            set { _snakeSpeed = value; }
+        }
 
-        public int FruitsPower => _fruitsPower;
+        public int FruitsPower
+        {
+            get { return _fruitsPower; }
+            set { _fruitsPower = value; }
+        }
 
         public int UpdateScale => _updateScale;
 

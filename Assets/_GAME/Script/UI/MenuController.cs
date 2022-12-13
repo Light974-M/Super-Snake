@@ -21,11 +21,20 @@ namespace SuperSnake.ClassicSnake
         [SerializeField, Tooltip("scriptable preset parameters used to build level")]
         private LevelParameters _levelParameters;
 
+        [SerializeField, Tooltip("scriptable preset parameters used to build snake")]
+        private SnakeParameters _snakeParameters;
+
         [SerializeField, Tooltip("slider used to set width of level preset")]
         private Slider _widthSlider;
 
         [SerializeField, Tooltip("slider used to set height of level preset")]
         private Slider _heightSlider;
+
+        [SerializeField, Tooltip("slider used to set snake speed of snake preset")]
+        private Slider _speedSlider;
+
+        [SerializeField, Tooltip("slider used to set fruit power of snake preset")]
+        private Slider _fruitPowerSlider;
 
         #endregion
 
@@ -47,6 +56,8 @@ namespace SuperSnake.ClassicSnake
             //set slider value to scriptable corresponding values
             _widthSlider.value = _levelParameters.Width;
             _heightSlider.value = _levelParameters.Height;
+            _speedSlider.value = _snakeParameters.SnakeSpeed;
+            _fruitPowerSlider.value = _snakeParameters.FruitsPower;
         }
 
         //called every frame
@@ -55,6 +66,9 @@ namespace SuperSnake.ClassicSnake
             //set slider value to scriptable corresponding values, clamped, bomb dynamically clamped to max tiles number
             _levelParameters.Width = (int)Mathf.Round(_widthSlider.value);
             _levelParameters.Height = (int)Mathf.Round(_heightSlider.value);
+            _snakeParameters.SnakeSpeed = (int)Mathf.Round(_speedSlider.value);
+            _snakeParameters.FruitsPower = (int)Mathf.Round(_fruitPowerSlider.value);
+
         }
 
         /// <summary>
@@ -62,21 +76,7 @@ namespace SuperSnake.ClassicSnake
         /// </summary>
         public void OnPlayButton()
         {
-            //set panel value and update panel
-            _panelDrawed = Panel.LevelChoose;
-
-            PanelUpdate();
-        }
-
-        /// <summary>
-        /// called when user click on ClassicMineSweeper button
-        /// </summary>
-        public void OnClassicMSButton()
-        {
-            //set panel value and update panel
-            _panelDrawed = Panel.ClassicMinesweeper;
-
-            PanelUpdate();
+            SceneManager.LoadScene("main");
         }
 
         /// <summary>
@@ -96,10 +96,11 @@ namespace SuperSnake.ClassicSnake
         /// <summary>
         /// called when user click on start button
         /// </summary>
-        public void OnStartButton()
+        public void OnSettingsButton()
         {
-            //load 2D level scene
-            SceneManager.LoadScene("2DLevel");
+            _panelDrawed++;
+
+            PanelUpdate();
         }
 
         /// <summary>

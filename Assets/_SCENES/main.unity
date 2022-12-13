@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bfc613e8efab694cb02d40ee1d4082c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levelParameters: {fileID: 11400000, guid: d4df00f96798aec47be061e28904d1a3, type: 2}
+  _levelParameters: {fileID: 11400000, guid: 894ac6ab9545623459c525d13b3d328a, type: 2}
   _snakeParameters: {fileID: 11400000, guid: 70b3fd8c96eec8a4290169c76abb5ff6, type: 2}
   _cellObjectPrefab: {fileID: 6909399732887726144, guid: 6bd6e4579b4e821428f3df2f6ace684e, type: 3}
   _cellsParentObject: {fileID: 715213509}
@@ -558,6 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -729,7 +730,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 101
+  orthographic size: 2.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -753,7 +754,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1975460225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 100.5, y: 100.5, z: -100}
+  m_LocalPosition: {x: 2, y: 2, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
