@@ -252,7 +252,7 @@ namespace SuperSnake.ClassicSnake
             }
         }
 
-        private void Respawn()
+        public void Respawn()
         {
             Level.IsGameOver = false;
             Level.IsPaused = false;
