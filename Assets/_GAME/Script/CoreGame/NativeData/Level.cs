@@ -20,8 +20,6 @@ namespace SuperSnake.ClassicSnake
 
         private bool _isPaused = false;
 
-        private Snake _snake;
-
         #endregion
 
 
@@ -41,12 +39,6 @@ namespace SuperSnake.ClassicSnake
         {
             get { return _isPaused; }
             set { _isPaused = value; }
-        }
-
-        public Snake SnakePlayer
-        {
-            get { return _snake; }
-            set { _snake = value; }
         }
 
         #endregion
@@ -94,14 +86,6 @@ namespace SuperSnake.ClassicSnake
 
             if (_availableCells.Count > 0)
                 _availableCells[new Random().Next(0, _availableCells.Count - 1)].CellUpdate(CellState.Fruit);
-        }
-
-        public void BuildSnake(Snake snakeToBuild)
-        {
-            _snake = snakeToBuild;
-
-            _snake.SnakeCellsList = new List<Cell>();
-            _snake.SnakeCellsList.Add(_cellsArray[_snake.Position.x, _snake.Position.y]);
         }
     }
 

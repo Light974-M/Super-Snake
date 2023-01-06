@@ -36,6 +36,9 @@ namespace SuperSnake.ClassicSnake
         [SerializeField, Tooltip("slider used to set fruit power of snake preset")]
         private Slider _fruitPowerSlider;
 
+        [SerializeField, Tooltip("slider used to set fruit power of snake preset")]
+        private Slider _playerNumberSlider;
+
         #endregion
 
         #region Public API
@@ -58,6 +61,7 @@ namespace SuperSnake.ClassicSnake
             _heightSlider.value = _levelParameters.Height;
             _speedSlider.value = _snakeParameters.SnakeSpeed;
             _fruitPowerSlider.value = _snakeParameters.FruitsPower;
+            _playerNumberSlider.value = _levelParameters.PlayerNumber;
         }
 
         //called every frame
@@ -68,7 +72,7 @@ namespace SuperSnake.ClassicSnake
             _levelParameters.Height = (int)Mathf.Round(_heightSlider.value);
             _snakeParameters.SnakeSpeed = (int)Mathf.Round(_speedSlider.value);
             _snakeParameters.FruitsPower = (int)Mathf.Round(_fruitPowerSlider.value);
-
+            _levelParameters.PlayerNumber = (int)Mathf.Round(_playerNumberSlider.value);
         }
 
         /// <summary>

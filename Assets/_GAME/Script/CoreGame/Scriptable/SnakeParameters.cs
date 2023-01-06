@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SuperSnake.ClassicSnake
@@ -32,7 +33,10 @@ namespace SuperSnake.ClassicSnake
         [SerializeField, Tooltip("number of tiles to grow with one fruit")]
         private int _fruitsPower = 1;
 
-        
+        [SerializeField, Tooltip("set the controls used by this player")]
+        private List<KeyCode> _valuesControls;
+
+
         #region public API
 
         public bool IsSnakeDefaultPos
@@ -79,6 +83,33 @@ namespace SuperSnake.ClassicSnake
 
         public int UpdateScale => _updateScale;
 
+        public List<KeyCode> ValuesControls
+        {
+            get { return _valuesControls; }
+            set { _valuesControls = value; }
+        }
+
+        public event UpdateSnakeParameters UpdateControls;
+
         #endregion
+
+        public void OverrideSnakeParameters(SnakeParameters newSnakeParameters)
+        {
+            _isSnakeDefaultPos = newSnakeParameters.IsSnakeDefaultPos;
+            _positionX = newSnakeParameters.PositionX;
+            _positionY = newSnakeParameters.PositionY;
+            _startDirection = newSnakeParameters.StartDirection;
+            _startGrowUpdate = newSnakeParameters.StartGrowUpdate;
+            _snakeSpeed = newSnakeParameters.SnakeSpeed;
+            _updateScale = newSnakeParameters.UpdateScale;
+            _fruitsPower = newSnakeParameters.FruitsPower;
+        }
+
+        private void OnValidate()
+        {
+            UpdateControls.Invoke();
+        }
     }
+
+    public delegate void UpdateSnakeParameters();
 }

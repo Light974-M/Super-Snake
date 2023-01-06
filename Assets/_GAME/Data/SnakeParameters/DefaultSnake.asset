@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 128f54df60acb8642aea62c7b1c3f5b8, type: 3}
   m_Name: DefaultSnake
   m_EditorClassIdentifier: 
-  _isSnakeDefaultPos: 1
-  _positionX: 1
+  _isSnakeDefaultPos: 0
+  _positionX: 20
   _positionY: 1
   _startDirection: 2
   _startGrowUpdate: 4
   _snakeSpeed: 10
   _updateScale: 1
-  _fruitsPower: 10
+  _fruitsPower: 31

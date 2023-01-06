@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SuperSnake.ClassicSnake
@@ -14,6 +15,9 @@ namespace SuperSnake.ClassicSnake
         [SerializeField, Tooltip("height of level in y")]
         private int _height = 3;
 
+        [SerializeField, Tooltip("number of player in scene")]
+        private int _playerNumber = 1;
+
 
         #region public API
 
@@ -27,6 +31,12 @@ namespace SuperSnake.ClassicSnake
         {
             get { return _height; }
             set { _height = value; }
+        }
+
+        public int PlayerNumber
+        {
+            get => _playerNumber;
+            set => _playerNumber = value;
         }
 
         #endregion
