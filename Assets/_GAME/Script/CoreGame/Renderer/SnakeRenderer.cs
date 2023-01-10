@@ -121,10 +121,30 @@ namespace SuperSnake.ClassicSnake
             {
                 _controls = new Dictionary<string, KeyCode>()
                 {
-                    { "Up", KeyCode.I },
-                    { "Down", KeyCode.K },
-                    { "Left", KeyCode.J },
-                    { "Right", KeyCode.L }
+                    { "Up", KeyCode.Y },
+                    { "Down", KeyCode.H },
+                    { "Left", KeyCode.G },
+                    { "Right", KeyCode.J }
+                };
+            }
+            else if (playerIndex == 3)
+            {
+                _controls = new Dictionary<string, KeyCode>()
+                {
+                    { "Up", KeyCode.Keypad5 },
+                    { "Down", KeyCode.Keypad2 },
+                    { "Left", KeyCode.Keypad1 },
+                    { "Right", KeyCode.Keypad3 }
+                };
+            }
+            else if (playerIndex == 4)
+            {
+                _controls = new Dictionary<string, KeyCode>()
+                {
+                    { "Up", KeyCode.O },
+                    { "Down", KeyCode.L },
+                    { "Left", KeyCode.K },
+                    { "Right", KeyCode.M }
                 };
             }
         }
